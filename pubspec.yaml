@@ -1,7 +1,7 @@
 name: bluetooth_printer
 description: Plugin for thermal printer by bluetooth from datecs dpp's brand.
 version: 0.0.1
-homepage:
+homepage: https://github.com/chnmelo/bluetooth_printer
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
