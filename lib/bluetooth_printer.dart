@@ -69,6 +69,26 @@ class BluetoothPrinter {
         "align": algin
       });
 
+
+
+  Future<dynamic> printTaggedText(String message) =>
+      _channel.invokeMethod('printTaggedText', {'message': message});
+
+  Future<dynamic> printText(String message) =>
+      _channel.invokeMethod('printText', {'message': message});
+
+  Future<dynamic> setAlign(String algin) =>
+      _channel.invokeMethod('setAlign', {"align": algin});
+
+  Future<dynamic> feedPaper(int lines) =>
+      _channel.invokeMethod('feedPaper', {"lines": lines});
+
+  Future<dynamic> reset() =>
+      _channel.invokeMethod('reset');
+
+  Future<dynamic> flush() =>
+      _channel.invokeMethod('flush');
+
   Future<List<BluetoothDevice>> getBondedDevices() async {
     final List list = await (_channel.invokeMethod('getBondedDevices'));
     return list.map((map) => BluetoothDevice.fromMap(map)).toList();

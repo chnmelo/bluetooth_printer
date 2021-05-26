@@ -87,6 +87,9 @@ public class BluetoothPrinterPlugin implements MethodCallHandler, RequestPermiss
 
   private StringBuffer textBuffer;
 
+  public static final int ALIGN_CENTER = Printer.ALIGN_CENTER;
+  public static final int ALIGN_LEFT = Printer.ALIGN_LEFT;
+  public static final int ALIGN_RIGHT = Printer.ALIGN_RIGHT;
 
   public static void registerWith(Registrar registrar) {
     final BluetoothPrinterPlugin instance = new BluetoothPrinterPlugin(registrar);
@@ -132,6 +135,7 @@ public class BluetoothPrinterPlugin implements MethodCallHandler, RequestPermiss
       // Get printer instance
       mPrinterChannel = mProtocolAdapter.getChannel(ProtocolAdapter.CHANNEL_PRINTER);
       mPrinter = new Printer(mPrinterChannel.getInputStream(), mPrinterChannel.getOutputStream());
+      THREAD = new ConnectedThread(mPrinter);
     }
   }
 
@@ -441,6 +445,51 @@ public class BluetoothPrinterPlugin implements MethodCallHandler, RequestPermiss
 
         break;
 
+      case "printText":
+        if (arguments.containsKey("message")) {
+          String message = (String) arguments.get("message");
+          THREAD.printText(result, message);
+        }else{
+          result.error("invalid_argument", "argument 'message' not found", null);
+        }
+        break;
+
+      case "printTaggedText":
+        if (arguments.containsKey("message")) {
+          String message = (String) arguments.get("message");
+          THREAD.printTaggedText(result, message);
+        }else{
+          result.error("invalid_argument", "argument 'message' not found", null);
+        }
+        break;
+
+      case "feedPaper":
+
+        if (arguments.containsKey("lines")) {
+          int lines = (int) arguments.get("lines");
+          THREAD.feedPaper(result, lines);
+        }else{
+          result.error("invalid_argument", "argument 'message' not found", null);
+        }
+        break;
+
+      case "setAlign":
+        if(arguments.containsKey("message")) {
+          String align = (String) arguments.get("align");
+          THREAD.setAlign(result, align);
+        }else{
+          result.error("invalid_argument", "argument 'message' not found", null);
+        }
+        break;
+
+      case "reset":
+        THREAD.reset(result);
+        break;
+
+      case "flush":
+          THREAD.flush(result);
+          break;
+
       default:
         result.notImplemented();
         break;
@@ -489,59 +538,76 @@ public class BluetoothPrinterPlugin implements MethodCallHandler, RequestPermiss
   }
 
   private class ConnectedThread extends Thread {
-    private final BluetoothSocket mmSocket;
-    private final InputStream inputStream;
-    private final OutputStream outputStream;
+    private Printer printer;
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
-    ConnectedThread(BluetoothSocket socket) {
-      mmSocket = socket;
-      InputStream tmpIn = null;
-      OutputStream tmpOut = null;
-
-      try {
-        tmpIn = socket.getInputStream();
-        tmpOut = socket.getOutputStream();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      inputStream = tmpIn;
-      outputStream = tmpOut;
+    ConnectedThread(Printer printer) {
+      this.printer = printer;
     }
 
-    public void run() {
-      byte[] buffer = new byte[1024];
-      int bytes;
-      while (true) {
-        try {
-          bytes = inputStream.read(buffer);
-          readSink.success(new String(buffer, 0, bytes));
-        } catch (NullPointerException e) {
-          break;
-        } catch (IOException e) {
-          break;
-        }
+    private int getAlign(String align){
+      switch (align){
+        case "CENTER":
+          return Printer.ALIGN_CENTER;
+        case "LEFT":
+          return Printer.ALIGN_LEFT;
+        case "RIGHT":
+          return Printer.ALIGN_RIGHT;
+        default:
+          return Printer.ALIGN_LEFT;
       }
     }
 
-    public void write(byte[] bytes) {
+    public void reset(Result result) {
       try {
-        outputStream.write(bytes);
-      } catch (IOException e) {
-        e.printStackTrace();
+        printer.reset();
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
       }
     }
 
-    public void cancel() {
+    public void setAlign(Result result, String align) {
       try {
-        outputStream.flush();
-        outputStream.close();
+        printer.setAlign(getAlign(align.toUpperCase()));
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
+      }
+    }
 
-        inputStream.close();
+    public void feedPaper(Result result, int lines) {
+      try {
+        printer.feedPaper(lines);
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
+      }
+    }
 
-        mmSocket.close();
-      } catch (IOException e) {
-        e.printStackTrace();
+    public void printText(Result result, String message) {
+      try {
+        printer.printText(message);
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
+      }
+    }
+
+    public void printTaggedText(Result result, String message) {
+      try {
+        printer.printTaggedText(message);
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
+      }
+    }
+
+    public void flush(Result result) {
+      try {
+        printer.flush();
+        result.success(true);
+      }catch (Exception error){
+        result.error("Problema ao Imprimir linha",error.toString(),null);
       }
     }
   }

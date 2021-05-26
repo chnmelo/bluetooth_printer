@@ -21,16 +21,13 @@ class TestPrint {
 //     Uint8List bytes = response.bodyBytes;
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
-        bluetooth.start();
-        bluetooth.printNewLine();
-        bluetooth.printNewLine();
-        bluetooth.writeTaggedText("{reset}{center}{h}{b}TITULO{br}");
-        bluetooth.writeTaggedText("{reset}{left}{s}{u}OLA{br}");
-        bluetooth.writeTaggedText("{reset}{center}{w}{i}MEU{br}");
-        bluetooth.writeTaggedText("{reset}{right}{h}{b}MUNDO{br}");
-        bluetooth.printNewLine();
-        bluetooth.printNewLine();
-        bluetooth.print();
+        bluetooth.feedPaper(110);
+        bluetooth.printTaggedText("{reset}{center}{h}{b}FALA TU{br}");
+        bluetooth.printTaggedText("{reset}{left}{s}{u}OLA{br}");
+        bluetooth.printTaggedText("{reset}{center}{w}{i}MEU{br}");
+        bluetooth.printTaggedText("{reset}{right}{h}{b}MUNDO{br}");
+        bluetooth.feedPaper(110);
+        bluetooth.flush();
       }
     });
   }

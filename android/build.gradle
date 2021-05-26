@@ -1,5 +1,5 @@
 group 'com.datecs.bluetooth_printer'
-version '1.0'
+version '0.0.2'
 
 buildscript {
     repositories {
