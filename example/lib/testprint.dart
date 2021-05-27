@@ -1,5 +1,7 @@
 import 'dart:typed_data';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show NetworkAssetBundle, rootBundle;
 import 'package:bluetooth_printer/bluetooth_printer.dart';
 
 
@@ -16,12 +18,20 @@ class TestPrint {
     // 0- ESC_ALIGN_LEFT
     // 1- ESC_ALIGN_CENTER
     // 2- ESC_ALIGN_RIGHT
-
-//     var response = await http.get("IMAGE_URL");
-//     Uint8List bytes = response.bodyBytes;
+    //
+    //Uint8List bytes = (await NetworkAssetBundle(Uri.parse("https://miopet.com.br/wp-content/uploads/2021/02/slide2.png"))
+    //    .load("https://miopet.com.br/wp-content/uploads/2021/02/slide2.png"))
+    //    .buffer
+    //    .asUint8List();
+    ByteData by = await rootBundle.load("assets/images/logo.png");
+    ByteBuffer buffer = by.buffer;
+    Uint8List bytes = Uint8List.view(buffer);
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
         bluetooth.feedPaper(110);
+        bluetooth.printImage(bytes,200,200,"CENTER",true,true);
+        //bluetooth.printImageBytes(bytes);
+        bluetooth.feedPaper(55);
         bluetooth.printTaggedText("{reset}{center}{h}{b}FALA TU{br}");
         bluetooth.printTaggedText("{reset}{left}{s}{u}OLA{br}");
         bluetooth.printTaggedText("{reset}{center}{w}{i}MEU{br}");

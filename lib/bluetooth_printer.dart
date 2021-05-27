@@ -1,4 +1,4 @@
-
+import 'dart:typed_data';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -37,42 +37,33 @@ class BluetoothPrinter {
   Future<dynamic> connect(String addr) =>
       _channel.invokeMethod('connect', {'address': addr});
 
-  Future<dynamic> start() => _channel.invokeMethod('start');
-
-  Future<dynamic> print() => _channel.invokeMethod('print');
-
-  Future<dynamic> printNewLine() => _channel.invokeMethod('printNewLine');
-
-  Future<dynamic> writeLine(String message, String algin) =>
-      _channel.invokeMethod('writeLine', {'message': message, "align": algin});
-
-  Future<dynamic> writeTaggedText(String message) =>
-      _channel.invokeMethod('writeTaggedText', {'message': message});
-
-  Future<dynamic> writeBoldLine(String message, String algin) =>
-      _channel.invokeMethod('writeBoldLine', {'message': message, "align": algin});
-
-  Future<dynamic> writeItalicLine(String message, String algin) =>
-      _channel.invokeMethod('writeItalicLine', {'message': message, "align": algin});
-
-  Future<dynamic> writeUnderlinecLine(String message, String algin) =>
-      _channel.invokeMethod('writeUndelineLine', {'message': message, "align": algin});
-
-  Future<dynamic> writeCustomLine(String message, bool bold,
-      bool underline, bool italic, String fontSize, String algin) =>
-      _channel.invokeMethod('writeCustomLine', {
-        "message": message,
-        "bold": bold,
-        "underline": underline,
-        "italic": italic,
-        "fontSize": fontSize,
-        "align": algin
-      });
-
-
-
   Future<dynamic> printTaggedText(String message) =>
       _channel.invokeMethod('printTaggedText', {'message': message});
+
+  Future<dynamic> printImage(Uint8List bytes, int width, int height, String align,
+      bool dither, bool crop) =>
+      _channel.invokeMethod('printImage', {
+        'bytes': bytes,
+        'width': width,
+        'height': height,
+        'align': align,
+        'dither': dither,
+        'crop': crop
+      });
+
+  Future<dynamic> printImageBytes(Uint8List bytes) =>
+      _channel.invokeMethod('printImageBytes', {'bytes': bytes});
+
+  Future<dynamic> printCompressedImage(Uint8List bytes, int width, int height, String align,
+      bool dither, bool crop) =>
+      _channel.invokeMethod('printCompressedImage', {
+        'bytes': bytes,
+        'width': width,
+        'height': height,
+        'align': align,
+        'dither': dither,
+        'crop': crop
+      });
 
   Future<dynamic> printText(String message) =>
       _channel.invokeMethod('printText', {'message': message});
