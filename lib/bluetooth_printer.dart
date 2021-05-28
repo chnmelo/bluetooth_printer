@@ -77,6 +77,12 @@ class BluetoothPrinter {
   Future<dynamic> reset() =>
       _channel.invokeMethod('reset');
 
+  Future<Int32List> getMaxPageWidth() =>
+      _channel.invokeMethod('getMaxPageWidth');
+
+  Future<String> getNamePrinter() =>
+      _channel.invokeMethod('getName');
+
   Future<dynamic> flush() =>
       _channel.invokeMethod('flush');
 

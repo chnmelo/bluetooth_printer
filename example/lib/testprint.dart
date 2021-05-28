@@ -8,6 +8,10 @@ import 'package:bluetooth_printer/bluetooth_printer.dart';
 class TestPrint {
   BluetoothPrinter bluetooth = BluetoothPrinter.instance;
 
+  int printDPP(String){
+
+  }
+
   sample() async {
     //SIZE
     // 0- normal size text
@@ -26,11 +30,14 @@ class TestPrint {
     ByteData by = await rootBundle.load("assets/images/logo.png");
     ByteBuffer buffer = by.buffer;
     Uint8List bytes = Uint8List.view(buffer);
-    bluetooth.isConnected.then((isConnected) {
+    bluetooth.isConnected.then((isConnected) async{
       if (isConnected) {
-        bluetooth.feedPaper(110);
+        //bluetooth.feedPaper(110);
         bluetooth.printImage(bytes,200,200,"CENTER",true,true);
         //bluetooth.printImageBytes(bytes);
+        await bluetooth.getMaxPageWidth().then((value) => bluetooth.printTaggedText("{center}${"*"*value[0]}"));
+        bluetooth.printTaggedText("{reset}{center}{b}TESTE DE *{br}");
+        await bluetooth.getMaxPageWidth().then((value) => bluetooth.printTaggedText("{center}${"*"*value[0]}"));
         bluetooth.feedPaper(55);
         bluetooth.printTaggedText("{reset}{center}{h}{b}FALA TU{br}");
         bluetooth.printTaggedText("{reset}{left}{s}{u}OLA{br}");

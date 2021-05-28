@@ -374,6 +374,24 @@ public class BluetoothPrinterPlugin implements MethodCallHandler, RequestPermiss
                 result.success(mBluetoothAdapter != null);
                 break;
 
+            case "getName":
+                try{
+                    PrinterInformation information = mPrinter.getInformation();
+                    result.success(information.getName());
+                }catch (IOException error) {
+                    result.error("Problemas ao retornar Configuraçẽos",error.getMessage(),null);
+                }
+                break;
+
+            case "getMaxPageWidth":
+                if(mPrinter != null){
+                    int[] pageWidths = {48,54};
+                    result.success(pageWidths);
+                }else{
+                    result.error("Sem impressora conectada","Nenhuma impressora achada",null);
+                }
+                break;
+
             case "isConnected":
                 result.success(THREAD != null);
                 break;
